@@ -1,5 +1,4 @@
 from random import randint, random
-import numpy as np
 from math import sqrt, log
 import matplotlib.pyplot as plt
 
@@ -75,8 +74,11 @@ def bandit(K,N,name):
     plot_cumulative_reward(name, N-K+1 ,cumulative_reward, K)
     return sum(s[m] for m in range(K))
 
-print(int(bandit(2,100000,"random")))
-print(int(bandit(2,100000,"eps_greedy")))
-print(int(bandit(2,100000,"eps_greedy_dec")))
-print(int(bandit(2, 100000, "UCB")))
+K = 2
+N = 100000
+
+print(int(bandit(K,N,"random")))
+print(int(bandit(K,N,"eps_greedy")))
+print(int(bandit(K,N,"eps_greedy_dec")))
+print(int(bandit(K,N, "UCB")))
 #plt.show()
