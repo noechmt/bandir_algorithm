@@ -31,7 +31,7 @@ def plot_cumulative_reward(name,N, cumulative_reward, list_display):
         case "eps_greedy_dec":
             plt.plot(list_display, cumulative_reward, "-yv")
         case "UCB":
-            plt.plot(range(offset, N + offset), cumulative_reward)
+            plt.plot(range(N), cumulative_reward)
             
             
 def plot_time(name, duree):
