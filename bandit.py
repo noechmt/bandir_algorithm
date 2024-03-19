@@ -7,6 +7,7 @@ number_of_try = 3
 K = 2
 N = 100000
 cumulative_reward = [0 for i in range(10*number_of_try)]
+duree = [0 for i in range(10)]
 p = 0
 list_display = [x*N/10 for x in range(1, 11)]
 
@@ -41,13 +42,13 @@ def plot_time(name, duree):
     plt.xlabel("Number of pulls")
     match name:
         case "random":
-            plt.plot(range(len(duree)), duree)
+            plt.plot(list_display, duree)
         case "eps_greedy":
-            plt.plot(range(len(duree)), duree)
+            plt.plot(list_display, duree)
         case "eps_greedy_dec":
-            plt.plot(range(len(duree)), duree)
+            plt.plot(list_display, duree)
         case "UCB":
-            plt.plot(range(len(duree)), duree)
+            plt.plot(list_display, duree)
 
 def bandit(K,N,name):
     s = [0 for i in range(K)]
@@ -58,7 +59,6 @@ def bandit(K,N,name):
         r = pull(i)
         s[i] = r
     start = time()
-    duree = []
     for t in range(K+1,N+1):
         match name:
             case "random":
@@ -93,8 +93,8 @@ def bandit(K,N,name):
                         max = temp
                         im = i
 
-        if(t%10000) == 0:
-            duree.append(time()-start)
+        if(t%(N/10)) == 0:
+            duree[int(t*10/N)-1] = (time()-start) + duree[int(t*10/N)-1]
 
         r = pull(im)
         s[im] += r
@@ -102,24 +102,27 @@ def bandit(K,N,name):
         if(t%10000) == 0:
             cumulative_reward[p] = sum(s[m] for m in range(K)) 
             p += 1      
-    plot_time(name, duree)
     return sum(s[m] for m in range(K))
 
 
 for i in range(number_of_try):
     bandit(K,N,"random")
+plot_time("random", [t/number_of_try for t in duree]) # Avergae of each case of the list "duree"
 plot_cumulative_reward("random",mean_cumulative_reward(cumulative_reward), list_display)
 p = 0
 for i in range(number_of_try):
     bandit(K,N,"eps_greedy")
+plot_time("eps_greedy", [t/number_of_try for t in duree])
 plot_cumulative_reward("eps_greedy",mean_cumulative_reward(cumulative_reward), list_display)
 p = 0
 for i in range(number_of_try):
     bandit(K,N,"eps_greedy_dec")
+plot_time("eps_greedy_dec", [t/number_of_try for t in duree])
 plot_cumulative_reward("eps_greedy_dec",mean_cumulative_reward(cumulative_reward), list_display)
 p = 0
 for i in range(number_of_try):
     bandit(K,N,"UCB")
+plot_time("UCB", [t/number_of_try for t in duree])
 plot_cumulative_reward("UCB",mean_cumulative_reward(cumulative_reward), list_display)
 plt.legend()
 plt.show()
