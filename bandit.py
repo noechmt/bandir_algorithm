@@ -3,7 +3,7 @@ from math import sqrt, log
 from time import time
 import matplotlib.pyplot as plt
 
-number_of_try = 1
+number_of_try = 3
 K = 2
 N = 100000
 cumulative_reward = [0 for i in range(10*number_of_try)]
@@ -57,9 +57,6 @@ def bandit(K,N,name):
     for i in range(K):
         r = pull(i)
         s[i] = r
-    #cumulative_reward[p] = sum(s[m] for m in range(K))
-    #p += 1
-    # variable de temps
     start = time()
     duree = []
     for t in range(K+1,N+1):
@@ -102,20 +99,13 @@ def bandit(K,N,name):
         r = pull(im)
         s[im] += r
         n[im] += 1
-        if(t in list_display):
+        if(t%10000) == 0:
             cumulative_reward[p] = sum(s[m] for m in range(K)) 
             p += 1      
-        #for the plot
-        #cumulative_reward[p] = cumulative_reward[p-1] + r
-        #p += 1
-
-    
     plot_time(name, duree)
     return sum(s[m] for m in range(K))
 
 
-
-#print(int(bandit(K,N,"random")))
 for i in range(number_of_try):
     bandit(K,N,"random")
 plot_cumulative_reward("random",mean_cumulative_reward(cumulative_reward), list_display)
