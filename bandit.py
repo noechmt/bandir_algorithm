@@ -3,7 +3,7 @@ from math import sqrt, log
 from time import time
 import matplotlib.pyplot as plt
 
-number_of_try = 3
+number_of_try = 5
 K = 2
 N = 100000
 cumulative_reward = [0 for i in range(10*number_of_try)]
@@ -15,10 +15,10 @@ def pull(arm):
     arms = [0.4, 0.8]
     return arms[arm]
 
-def mean_cumulative_reward(cumlative_reward):
+def mean_cumulative_reward(test):
     average = [0 for i in range(10)]
     for i in range(10):
-        average[i] = sum(cumulative_reward[i+x] for x in range(0,number_of_try,10))/10
+        average[i] = sum(test[i+x*10] for x in range(0,number_of_try))/number_of_try
     return average
 
 def plot_cumulative_reward(name, cumulative_reward, list_display):
@@ -42,13 +42,13 @@ def plot_time(name, duree):
     plt.xlabel("Number of pulls")
     match name:
         case "random":
-            plt.plot(list_display, duree)
+            plt.plot(list_display, duree,"-r^", label='random')
         case "eps_greedy":
-            plt.plot(list_display, duree)
+            plt.plot(list_display, duree, "-go", label='eps_greedy')
         case "eps_greedy_dec":
-            plt.plot(list_display, duree)
+            plt.plot(list_display, duree, "-yv", label='eps_greedy_dec')
         case "UCB":
-            plt.plot(list_display, duree)
+            plt.plot(list_display, duree, "-bs", label='UCB')
 
 def bandit(K,N,name):
     s = [0 for i in range(K)]
@@ -99,11 +99,10 @@ def bandit(K,N,name):
         r = pull(im)
         s[im] += r
         n[im] += 1
-        if(t%10000) == 0:
+        if(t%(N/10)) == 0:
             cumulative_reward[p] = sum(s[m] for m in range(K)) 
             p += 1      
     return sum(s[m] for m in range(K))
-
 
 for i in range(number_of_try):
     bandit(K,N,"random")
@@ -123,6 +122,9 @@ p = 0
 for i in range(number_of_try):
     bandit(K,N,"UCB")
 plot_time("UCB", [t/number_of_try for t in duree])
+plt.legend()
+plt.savefig('time', format='pdf')
 plot_cumulative_reward("UCB",mean_cumulative_reward(cumulative_reward), list_display)
 plt.legend()
+plt.savefig('reward', format='pdf')
 plt.show()
