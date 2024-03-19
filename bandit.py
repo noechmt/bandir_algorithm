@@ -1,5 +1,6 @@
 from random import randint, random
 from math import sqrt, log
+from time import time
 import matplotlib.pyplot as plt
 
 K = 2
@@ -19,6 +20,7 @@ def mean_cumulative_reward(cumlative_reward):
     return average
 
 def plot_cumulative_reward(name,N, cumulative_reward, list_display):
+    plt.figure("reward")
     plt.ylabel("Cumulative reward")
     plt.xlabel("Number of pulls")
     match name:
@@ -29,9 +31,23 @@ def plot_cumulative_reward(name,N, cumulative_reward, list_display):
         case "eps_greedy_dec":
             plt.plot(list_display, cumulative_reward, "-yv")
         case "UCB":
-            plt.plot(list_display, cumulative_reward, "-bs")
+            plt.plot(range(offset, N + offset), cumulative_reward)
             
             
+def plot_time(name, duree):
+    plt.figure("time")
+    plt.ylabel("Time (in seconds)")
+    plt.xlabel("Number of pulls")
+    match name:
+        case "random":
+            plt.plot(range(len(duree)), duree)
+        case "eps_greedy":
+            plt.plot(range(len(duree)), duree)
+        case "eps_greedy_dec":
+            plt.plot(range(len(duree)), duree)
+        case "UCB":
+            plt.plot(range(len(duree)), duree)
+
 def bandit(K,N,name):
     s = [0 for i in range(K)]
     n = [1 for i in range(K)]
@@ -42,6 +58,9 @@ def bandit(K,N,name):
         s[i] = r
     #cumulative_reward[p] = sum(s[m] for m in range(K))
     #p += 1
+    # variable de temps
+    start = time()
+    duree = []
     for t in range(K+1,N+1):
         match name:
             case "random":
@@ -75,6 +94,10 @@ def bandit(K,N,name):
                     if temp > max:
                         max = temp
                         im = i
+
+        if(t%10000) == 0:
+            duree.append(time()-start)
+
         r = pull(im)
         s[im] += r
         n[im] += 1
@@ -84,7 +107,9 @@ def bandit(K,N,name):
         #for the plot
         #cumulative_reward[p] = cumulative_reward[p-1] + r
         #p += 1
+
     
+    plot_time(name, duree)
     return sum(s[m] for m in range(K))
 
 
