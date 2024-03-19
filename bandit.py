@@ -2,9 +2,10 @@ from random import randint, random
 from math import sqrt, log
 import matplotlib.pyplot as plt
 
+number_of_try = 1
 K = 2
 N = 100000
-cumulative_reward = [0 for i in range(10*100)]
+cumulative_reward = [0 for i in range(10*number_of_try)]
 p = 0
 list_display = [x*N/10 for x in range(1, 11)]
 
@@ -15,22 +16,21 @@ def pull(arm):
 def mean_cumulative_reward(cumlative_reward):
     average = [0 for i in range(10)]
     for i in range(10):
-        average[i] = sum(cumulative_reward[i+x] for x in range(0,100,10))/10
+        average[i] = sum(cumulative_reward[i+x] for x in range(0,number_of_try,10))/10
     return average
 
-def plot_cumulative_reward(name,N, cumulative_reward, list_display):
+def plot_cumulative_reward(name, cumulative_reward, list_display):
     plt.ylabel("Cumulative reward")
     plt.xlabel("Number of pulls")
     match name:
         case "random":
-            plt.plot(list_display, cumulative_reward, "-r^")
+            plt.plot(list_display, cumulative_reward, "-r^", label='random')
         case "eps_greedy":
-            plt.plot(list_display, cumulative_reward, "-go")
+            plt.plot(list_display, cumulative_reward, "-go", label='eps_greedy')
         case "eps_greedy_dec":
-            plt.plot(list_display, cumulative_reward, "-yv")
+            plt.plot(list_display, cumulative_reward, "-yv", label='eps_greedy_dec')
         case "UCB":
-            plt.plot(list_display, cumulative_reward, "-bs")
-            
+            plt.plot(list_display, cumulative_reward, "-bs", label='UCB')
             
 def bandit(K,N,name):
     s = [0 for i in range(K)]
@@ -90,20 +90,20 @@ def bandit(K,N,name):
 
 
 #print(int(bandit(K,N,"random")))
-for i in range(100):
+for i in range(number_of_try):
     bandit(K,N,"random")
-plot_cumulative_reward("random", N ,mean_cumulative_reward(cumulative_reward), list_display)
+plot_cumulative_reward("random",mean_cumulative_reward(cumulative_reward), list_display)
 p = 0
-for i in range(100):
+for i in range(number_of_try):
     bandit(K,N,"eps_greedy")
-plot_cumulative_reward("eps_greedy", N ,mean_cumulative_reward(cumulative_reward), list_display)
+plot_cumulative_reward("eps_greedy",mean_cumulative_reward(cumulative_reward), list_display)
 p = 0
-for i in range(100):
+for i in range(number_of_try):
     bandit(K,N,"eps_greedy_dec")
-plot_cumulative_reward("eps_greedy_dec", N ,mean_cumulative_reward(cumulative_reward), list_display)
+plot_cumulative_reward("eps_greedy_dec",mean_cumulative_reward(cumulative_reward), list_display)
 p = 0
-for i in range(100):
+for i in range(number_of_try):
     bandit(K,N,"UCB")
-plot_cumulative_reward("UCB", N ,mean_cumulative_reward(cumulative_reward), list_display)
-
+plot_cumulative_reward("UCB",mean_cumulative_reward(cumulative_reward), list_display)
+plt.legend()
 plt.show()
